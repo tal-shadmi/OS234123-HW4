@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/OS234123_HW4.dir/main.cpp.o CMakeFiles/OS234123_HW4.dir/malloc_1.cpp.o CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.o  -o OS234123_HW4 

@@ -1,0 +1,3 @@
+/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir
