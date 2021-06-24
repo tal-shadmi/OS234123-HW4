@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <cmath>
 #include <cstddef>
+#include "malloc_2.h"
 
 using std::memset;
 using std::memcpy;
@@ -16,6 +17,10 @@ struct MallocMetadata{
 
 static MallocMetadata* list_head = nullptr;
 static MallocMetadata* list_tail = nullptr;
+
+size_t _size_meta_data() {
+    return sizeof(MallocMetadata);
+}
 
 size_t _num_free_blocks() {
     MallocMetadata* tmp = list_head;
@@ -60,11 +65,7 @@ size_t _num_allocated_bytes() {
         }
         tmp = tmp->next;
     }
-    return num_of_allocated_bytes;
-}
-
-size_t _size_meta_data() {
-    return sizeof(MallocMetadata);
+    return num_of_allocated_bytes ;
 }
 
 size_t _num_meta_data_bytes() {
