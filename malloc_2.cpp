@@ -60,9 +60,7 @@ size_t _num_allocated_bytes() {
     MallocMetadata* tmp = list_head;
     size_t num_of_allocated_bytes = 0;
     while(tmp) {
-        if (!tmp->is_free) {
-            num_of_allocated_bytes += tmp->size;
-        }
+        num_of_allocated_bytes += tmp->size;
         tmp = tmp->next;
     }
     return num_of_allocated_bytes ;
@@ -139,7 +137,7 @@ void* srealloc(void* oldp, size_t size) {
     MallocMetadata* oldp_meta_data = nullptr;
     if (oldp != NULL) {
         oldp_meta_data = (MallocMetadata*)oldp;
-        oldp_meta_data = oldp_meta_data - _size_meta_data();
+        oldp_meta_data--;
         if (oldp_meta_data->size >= size) {
             return oldp;
         }
