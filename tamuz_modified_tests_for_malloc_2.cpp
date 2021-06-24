@@ -26,7 +26,7 @@ IMPORTANT_NOTE: I HOLD NO responsability for these tests no to their results, th
 #include <cstdlib>
 #include <sys/wait.h>
 #include <iostream>
-#include "malloc_2.cpp"
+#include "malloc_2.h"
 
 #define assert_state(_initial, _expected)\
 	do {\
@@ -473,3 +473,4 @@ int main()
     callTestFunction(test_failures);
     return 0;
 }
+
