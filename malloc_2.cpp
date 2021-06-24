@@ -96,7 +96,7 @@ void* smalloc(size_t size) {
     }
     ((MallocMetadata*) prev_prog_break)->size = size;
     ((MallocMetadata*) prev_prog_break)->is_free = false;
-    ((MallocMetadata*) prev_prog_break)->address = (void*)((MallocMetadata*)prev_prog_break + _size_meta_data());
+    ((MallocMetadata*) prev_prog_break)->address =  static_cast<char*>(prev_prog_break) + _size_meta_data();
     if (list_head == nullptr){ //case list empty
         list_head = (MallocMetadata*) prev_prog_break;
         list_head->next = nullptr;
@@ -127,7 +127,7 @@ void sfree(void* p) {
         return;
     }
     MallocMetadata* tmp = (MallocMetadata*)p;
-    tmp = tmp - _size_meta_data();
+    tmp --;
     tmp->is_free= true;
 }
 
