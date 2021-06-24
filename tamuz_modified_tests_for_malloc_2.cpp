@@ -15,7 +15,8 @@ NOTE2: you can run it with GDB or CLI if you wish.
 
 NOTE3: it seems (from my understanding of the way the tests were coded) that srealloc(NULL, <somesize>); was supposed to act like smalloc(<somesize>);.
        if i didnt miss anything, in our HW oldp=NULL is not addreseed in srealloc. therefore expect SEGFAULT in srealloc. one easy fix is:
-       		- if srealloc was called with NULL == oldp and size == <somesize>, call smalloc(<somesize>), check ret_val and return it. since i didnt see out staff address such a call, i assume it 			  will not happen and therefore do whatever is needed to keep the test from getting angry and SEGFAULTing.  
+       		- if srealloc was called with NULL == oldp and size == <somesize>, call smalloc(<somesize>), check ret_val and return it. since i didnt see out staff address such a call, i assume
+       		it will not happen and therefore do whatever is needed to keep the test from getting angry and SEGFAULTing.
 
 IMPORTANT_NOTE: I HOLD NO responsability for these tests no to their results, they may be faulty and it's up to YOU to decide, if you wish to use them.
 
