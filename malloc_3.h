@@ -1,9 +1,9 @@
 //
-// Created by Rotem on 6/24/2021.
+// Created by Dell on 24/06/2021.
 //
 
-#ifndef OS234123_HW4_MALLOC_2_H
-#define OS234123_HW4_MALLOC_2_H
+#ifndef OS234123_HW4_MALLOC_3_H
+#define OS234123_HW4_MALLOC_3_H
 
 size_t _size_meta_data();
 
@@ -28,4 +28,4 @@ void sfree(void* p) ;
 
 void* srealloc(void* oldp, size_t size) ;
 
-#endif //OS234123_HW4_MALLOC_2_H
+#endif //OS234123_HW4_MALLOC_3_H

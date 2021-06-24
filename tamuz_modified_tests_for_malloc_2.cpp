@@ -30,8 +30,8 @@ IMPORTANT_NOTE: I HOLD NO responsability for these tests no to their results, th
 #include "malloc_2.h"
 
 #define assert_state(_initial, _expected)\
-	do {\
-		assert(_num_free_blocks() - _initial.free_blocks == _expected.free_blocks); \
+	do {                                    \
+		assert(_num_free_blocks() - _initial.free_blocks == _expected.free_blocks);                  \
 		assert(_num_free_bytes() - _initial.free_bytes == _expected.free_bytes); \
 		assert(_num_allocated_blocks() - _initial.allocated_blocks == _expected.allocated_blocks); \
 		assert(_num_allocated_bytes() - _initial.allocated_bytes == _expected.allocated_bytes); \
@@ -205,6 +205,17 @@ void test_malloc_then_free() {
     /* Free all */
     sfree(p[0]);
     free_expected_block(expected, BLOCK_SIZES[0]);
+//    std::cout << "our num of free blocks: " << _num_free_blocks() - initial.free_blocks << std::endl;
+//    std::cout << "expected free blocks: " << expected.free_blocks << std::endl;
+//    std::cout << "our num of free bytes: " << _num_free_bytes() - initial.free_bytes << std::endl;
+//    std::cout << "expected free bytes: " << expected.free_bytes << std::endl;
+//    std::cout << "our num of allocated blocks: " << _num_allocated_blocks() - initial.allocated_blocks << std::endl;
+//    std::cout << "expected allocated blocks: " << expected.allocated_blocks << std::endl;
+//    std::cout << "our num of allocated bytes: " << _num_allocated_bytes() - initial.allocated_bytes << std::endl;
+//    std::cout << "expected allocated bytes: " << expected.allocated_bytes << std::endl;
+//    std::cout << "our num of data bytes: " << _num_meta_data_bytes() - initial.meta_data_bytes << std::endl;
+//    std::cout << "expected data bytes: " << expected.meta_data_bytes << std::endl;
+//    std::cout << _size_meta_data() << std::endl;
     assert_state(initial, expected);
     sfree(p[1]);
     free_expected_block(expected, BLOCK_SIZES[1]);

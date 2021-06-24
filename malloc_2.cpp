@@ -60,9 +60,7 @@ size_t _num_allocated_bytes() {
     MallocMetadata* tmp = list_head;
     size_t num_of_allocated_bytes = 0;
     while(tmp) {
-        if (!tmp->is_free) {
-            num_of_allocated_bytes += tmp->size;
-        }
+        num_of_allocated_bytes += tmp->size;
         tmp = tmp->next;
     }
     return num_of_allocated_bytes ;
@@ -77,12 +75,10 @@ void* smalloc(size_t size) {
         return NULL;
     }
     MallocMetadata* tmp = list_head;
-    MallocMetadata* pos = nullptr;
     while(tmp) {
         if (tmp->is_free and tmp->size >= size) {
             break;
         }
-        pos = tmp;
         tmp = tmp->next;
     }
     if(tmp != nullptr) {
@@ -96,7 +92,7 @@ void* smalloc(size_t size) {
     }
     ((MallocMetadata*) prev_prog_break)->size = size;
     ((MallocMetadata*) prev_prog_break)->is_free = false;
-    ((MallocMetadata*) prev_prog_break)->address =  static_cast<char*>(prev_prog_break) + _size_meta_data();
+    ((MallocMetadata*) prev_prog_break)->address = static_cast<char*>(prev_prog_break) + _size_meta_data();
     if (list_head == nullptr){ //case list empty
         list_head = (MallocMetadata*) prev_prog_break;
         list_head->next = nullptr;
@@ -139,7 +135,7 @@ void* srealloc(void* oldp, size_t size) {
     MallocMetadata* oldp_meta_data = nullptr;
     if (oldp != NULL) {
         oldp_meta_data = (MallocMetadata*)oldp;
-        oldp_meta_data = oldp_meta_data - _size_meta_data();
+        oldp_meta_data--;
         if (oldp_meta_data->size >= size) {
             return oldp;
         }

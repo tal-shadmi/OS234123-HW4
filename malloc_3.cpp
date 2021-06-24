@@ -3,13 +3,14 @@
 #include <cmath>
 #include <cstddef>
 #include <sys/mman.h>
+#include "malloc_3.h"
 
 using std::memset;
 using std::memcpy;
 
-#define MMAP_MIN_SIZE 128*1024
+#define MMAP_MIN_SIZE (128 * 1024)
 #define BIN_MAX_SIZE 128
-#define  KB 1024
+#define KB 1024
 
 struct MallocMetadata{
     size_t size;
@@ -52,7 +53,7 @@ void split_block(size_t size, MallocMetadata* block_to_split) {
     new_metadata->next = tmp;
     new_metadata->prev = block_to_split;
     block_to_split->next = new_metadata;
-    free((void*)new_metadata);
+    sfree((void*)new_metadata);
 }
 
 bool merge(MallocMetadata* first , MallocMetadata* second){
@@ -118,24 +119,27 @@ void* smalloc(size_t size) {
         return mmap_create(size);
     }
     size_t index = size / KB;
-    MallocMetadata* first_in_bin = free_bins[index];
-    while (first_in_bin) {
-        if (first_in_bin->size >= size) {
-            split_block(size, first_in_bin);
-            first_in_bin->is_free = false;
-            if (first_in_bin->prev_free) {
-                first_in_bin->prev_free->next_free = first_in_bin->next_free;
+    MallocMetadata* first_in_bin;
+    for (; index < BIN_MAX_SIZE; index++) {
+        first_in_bin = free_bins[index];
+        while (first_in_bin) {
+            if (first_in_bin->size >= size) {
+                split_block(size, first_in_bin);
+                first_in_bin->is_free = false;
+                if (first_in_bin->prev_free) {
+                    first_in_bin->prev_free->next_free = first_in_bin->next_free;
+                }
+                if (first_in_bin->next_free) {
+                    first_in_bin->next_free->prev_free = first_in_bin->prev_free;
+                }
+                first_in_bin->next_free = nullptr;
+                first_in_bin->prev_free = nullptr;
+                return first_in_bin->address;
             }
-            if (first_in_bin->next_free) {
-                first_in_bin->next_free->prev_free = first_in_bin->prev_free;
-            }
-            first_in_bin->next_free = nullptr;
-            first_in_bin->prev_free = nullptr;
-            return first_in_bin->address;
+            first_in_bin = first_in_bin->next_free;
         }
-        first_in_bin = first_in_bin->next_free;
     }
-    if(list_block_tail->is_free) {
+    if (list_block_tail->is_free) {
         if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
             return NULL;
         }
@@ -155,7 +159,7 @@ void* smalloc(size_t size) {
     }
     ((MallocMetadata*) prev_prog_break)->size = size;
     ((MallocMetadata*) prev_prog_break)->is_free = false;
-    ((MallocMetadata*) prev_prog_break)->address = (void*)((char*)prev_prog_break + _size_meta_data());
+    ((MallocMetadata*) prev_prog_break)->address = static_cast<char*>(prev_prog_break) + _size_meta_data();
     if (list_block_head == nullptr){ //case list empty
         list_block_head = (MallocMetadata*) prev_prog_break;
         list_block_head->next = nullptr;
@@ -218,10 +222,45 @@ void* srealloc(void* oldp, size_t size) {
     MallocMetadata* oldp_meta_data = nullptr;
     if (oldp != NULL) {
         oldp_meta_data = (MallocMetadata*)oldp;
-        oldp_meta_data --;
-        if (oldp_meta_data->size >= size) {
-            return oldp;
+        oldp_meta_data--;
+    }
+    oldp_meta_data->is_free = true;
+    if (oldp_meta_data->size < size) {
+        if (oldp_meta_data->prev != nullptr and
+            oldp_meta_data->prev->is_free and
+            oldp_meta_data->size + oldp_meta_data->prev->size >= size) {
+            if (merge(oldp_meta_data->prev, oldp_meta_data)) {
+                oldp_meta_data = oldp_meta_data->prev;
+            }
+        } else if (oldp_meta_data->next != nullptr and
+                   oldp_meta_data->next->is_free and
+                   oldp_meta_data->size + oldp_meta_data->next->size >= size) {
+            merge(oldp_meta_data, oldp_meta_data->next);
         }
+        else if (oldp_meta_data->next != nullptr and oldp_meta_data->prev != nullptr and
+                 oldp_meta_data->next->is_free and oldp_meta_data->prev->is_free and
+                 oldp_meta_data->size + oldp_meta_data->next->size + oldp_meta_data->prev->size >= size) {
+            oldp_meta_data = merge_free(oldp_meta_data);
+        }
+    }
+    oldp_meta_data->is_free = false;
+    if (oldp_meta_data->size >= size) {
+        split_block(size, oldp_meta_data);
+        return oldp_meta_data->address;
+    }
+    if (list_block_tail->is_free) {
+        if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
+            return NULL;
+        }
+        if (list_block_tail->prev_free != nullptr) {
+            list_block_tail->prev_free->next_free = list_block_tail->next_free;
+        }
+        if (list_block_tail->next_free != nullptr) {
+            list_block_tail->next_free->prev_free = list_block_tail->prev_free;
+        }
+        list_block_tail->is_free = false;
+        list_block_tail->size = size;
+        return list_block_tail;
     }
     void* prev_prog_break = smalloc(size);
     if(oldp != NULL and prev_prog_break != NULL){
@@ -278,9 +317,7 @@ size_t _num_allocated_bytes() {
     MallocMetadata* tmp = list_block_head;
     size_t num_of_allocated_bytes = 0;
     while(tmp) {
-        if (!tmp->is_free) {
-            num_of_allocated_bytes += tmp->size;
-        }
+        num_of_allocated_bytes += tmp->size;
         tmp = tmp->next;
     }
     return num_of_allocated_bytes;
