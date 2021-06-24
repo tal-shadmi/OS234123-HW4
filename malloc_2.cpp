@@ -63,12 +63,12 @@ size_t _num_allocated_bytes() {
     return num_of_allocated_bytes;
 }
 
-size_t _num_meta_data_bytes() {
-    return _num_allocated_blocks()*_size_meta_data();
-}
-
 size_t _size_meta_data() {
     return sizeof(MallocMetadata);
+}
+
+size_t _num_meta_data_bytes() {
+    return _num_allocated_blocks()*_size_meta_data();
 }
 
 void* smalloc(size_t size) {

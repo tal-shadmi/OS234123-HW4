@@ -4,10 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/main.cpp" "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/main.cpp.o"
-  "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/malloc_1.cpp" "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/malloc_1.cpp.o"
-  "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/malloc_2.cpp" "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o"
-  "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/malloc_3.cpp" "/mnt/c/Users/Dell/CLionProjects/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.o"
+  "/mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/malloc_2.cpp" "/mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o"
+  "/mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/tamuz_modified_tests_for_malloc_2.cpp" "/mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

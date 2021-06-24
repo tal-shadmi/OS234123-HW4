@@ -1,8 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/OS234123_HW4.dir/main.cpp.o"
-  "CMakeFiles/OS234123_HW4.dir/malloc_1.cpp.o"
   "CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o"
-  "CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.o"
+  "CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o"
   "OS234123_HW4"
   "OS234123_HW4.pdb"
 )

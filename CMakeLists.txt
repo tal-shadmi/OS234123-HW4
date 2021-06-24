@@ -3,4 +3,4 @@ project(OS234123_HW4)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(OS234123_HW4 main.cpp malloc_1.cpp malloc_2.cpp malloc_3.cpp)
+add_executable(OS234123_HW4 tamuz_modified_tests_for_malloc_2.cpp malloc_2.cpp)
