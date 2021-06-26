@@ -10,6 +10,7 @@ using std::memcpy;
 
 #define MMAP_MIN_SIZE (128 * 1024)
 #define BIN_MAX_SIZE 128
+#define MIN_SPLIT 128
 #define KB 1024
 
 struct MallocMetadata{
@@ -41,13 +42,13 @@ size_t _num_meta_data_bytes();
 size_t _size_meta_data();
 
 void split_block(size_t size, MallocMetadata* block_to_split) {
-    if (block_to_split->size - size - _size_meta_data() < BIN_MAX_SIZE ) {
+    if (block_to_split->size - size - _size_meta_data() < MIN_SPLIT ) {
         return;
     }
     size_t old_size = block_to_split->size;
     block_to_split->size = size;
     MallocMetadata * new_metadata = (MallocMetadata*)((char*)block_to_split->address + size);
-    new_metadata->address = (char*)new_metadata + _size_meta_data();
+    new_metadata->address = static_cast<char*>new_metadata + _size_meta_data();
     new_metadata->size = old_size - size;
     MallocMetadata * tmp =  block_to_split->next;
     new_metadata->next = tmp;
