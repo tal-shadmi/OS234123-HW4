@@ -6,7 +6,7 @@
 #include "malloc_3.h"
 
 using std::memset;
-using std::memcpy;
+using std::memmove;
 
 #define MMAP_MIN_SIZE (128 * 1024)
 #define BIN_MAX_SIZE 128
@@ -155,7 +155,7 @@ void* smalloc(size_t size) {
     if (size == 0 or size > pow(10,8)) {
         return NULL;
     }
-    if (size > MMAP_MIN_SIZE) {
+    if (size >= MMAP_MIN_SIZE) {
         return mmap_create(size);
     }
     size_t index = size / KB;
@@ -223,6 +223,9 @@ void* scalloc(size_t num, size_t size) {
         return NULL;
     }
     void* prev_prog_break = smalloc(num * size);
+    if (prev_prog_break == (void*)(-1)) {
+        return NULL;
+    }
     void* curr = prev_prog_break;
     memset(curr, 0, num * size);
     return prev_prog_break;
@@ -321,7 +324,7 @@ void* srealloc(void* oldp, size_t size) {
         if (oldp_meta_data->size >= size) {
             split_block(size, oldp_meta_data); // last test gets "core dumped" with this split
             if (temp != nullptr) {
-                memcpy(oldp_meta_data->address, temp->address, temp->size);
+                memmove(oldp_meta_data->address, temp->address, temp->size);
             }
             return oldp_meta_data->address;
         }
@@ -337,7 +340,7 @@ void* srealloc(void* oldp, size_t size) {
             }
             list_block_tail->is_free = false;
             list_block_tail->size = size;
-            memcpy(list_block_tail->address, oldp, oldp_meta_data->size);
+            memmove(list_block_tail->address, oldp, oldp_meta_data->size);
             if (list_block_tail->address != oldp) {
                 sfree((void*)oldp);
             }
@@ -346,7 +349,12 @@ void* srealloc(void* oldp, size_t size) {
     }
     void* prev_prog_break = smalloc(size);
     if(oldp != NULL and prev_prog_break != NULL){
-        memcpy(prev_prog_break,oldp,size);
+        if (size < oldp_meta_data->size) {
+            memmove(prev_prog_break,oldp,size);
+        }
+        else {
+            memmove(prev_prog_break,oldp,oldp_meta_data->size);
+        }
         sfree((void*)oldp);
     }
     return prev_prog_break;
