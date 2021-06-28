@@ -47,8 +47,9 @@ void split_block(size_t size, MallocMetadata* block_to_split) {
     }
     size_t old_size = block_to_split->size;
     block_to_split->size = size;
-    MallocMetadata * new_metadata = (MallocMetadata*)((char*)block_to_split->address + size);
-    new_metadata->address = static_cast<char*>new_metadata + _size_meta_data();
+    void * temp = static_cast<char*>(block_to_split->address) + size;
+    MallocMetadata * new_metadata = static_cast<MallocMetadata*>(temp);
+    new_metadata->address = static_cast<char*>(temp) + _size_meta_data();
     new_metadata->size = old_size - size;
     MallocMetadata * tmp =  block_to_split->next;
     new_metadata->next = tmp;
