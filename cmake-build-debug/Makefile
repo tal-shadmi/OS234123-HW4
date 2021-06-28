@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4
+CMAKE_SOURCE_DIR = /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug
+CMAKE_BINARY_DIR = /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -123,59 +123,59 @@ OS234123_HW4/fast:
 	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/build
 .PHONY : OS234123_HW4/fast
 
-malloc_2.o: malloc_2.cpp.o
+malloc_3.o: malloc_3.cpp.o
 
-.PHONY : malloc_2.o
-
-# target to build an object file
-malloc_2.cpp.o:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o
-.PHONY : malloc_2.cpp.o
-
-malloc_2.i: malloc_2.cpp.i
-
-.PHONY : malloc_2.i
-
-# target to preprocess a source file
-malloc_2.cpp.i:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.i
-.PHONY : malloc_2.cpp.i
-
-malloc_2.s: malloc_2.cpp.s
-
-.PHONY : malloc_2.s
-
-# target to generate assembly for a file
-malloc_2.cpp.s:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.s
-.PHONY : malloc_2.cpp.s
-
-tamuz_modified_tests_for_malloc_2.o: tamuz_modified_tests_for_malloc_2.cpp.o
-
-.PHONY : tamuz_modified_tests_for_malloc_2.o
+.PHONY : malloc_3.o
 
 # target to build an object file
-tamuz_modified_tests_for_malloc_2.cpp.o:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o
-.PHONY : tamuz_modified_tests_for_malloc_2.cpp.o
+malloc_3.cpp.o:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.o
+.PHONY : malloc_3.cpp.o
 
-tamuz_modified_tests_for_malloc_2.i: tamuz_modified_tests_for_malloc_2.cpp.i
+malloc_3.i: malloc_3.cpp.i
 
-.PHONY : tamuz_modified_tests_for_malloc_2.i
+.PHONY : malloc_3.i
 
 # target to preprocess a source file
-tamuz_modified_tests_for_malloc_2.cpp.i:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.i
-.PHONY : tamuz_modified_tests_for_malloc_2.cpp.i
+malloc_3.cpp.i:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.i
+.PHONY : malloc_3.cpp.i
 
-tamuz_modified_tests_for_malloc_2.s: tamuz_modified_tests_for_malloc_2.cpp.s
+malloc_3.s: malloc_3.cpp.s
 
-.PHONY : tamuz_modified_tests_for_malloc_2.s
+.PHONY : malloc_3.s
 
 # target to generate assembly for a file
-tamuz_modified_tests_for_malloc_2.cpp.s:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.s
-.PHONY : tamuz_modified_tests_for_malloc_2.cpp.s
+malloc_3.cpp.s:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.s
+.PHONY : malloc_3.cpp.s
+
+tamuz_tests_hw4_malloc3.o: tamuz_tests_hw4_malloc3.cpp.o
+
+.PHONY : tamuz_tests_hw4_malloc3.o
+
+# target to build an object file
+tamuz_tests_hw4_malloc3.cpp.o:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_tests_hw4_malloc3.cpp.o
+.PHONY : tamuz_tests_hw4_malloc3.cpp.o
+
+tamuz_tests_hw4_malloc3.i: tamuz_tests_hw4_malloc3.cpp.i
+
+.PHONY : tamuz_tests_hw4_malloc3.i
+
+# target to preprocess a source file
+tamuz_tests_hw4_malloc3.cpp.i:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_tests_hw4_malloc3.cpp.i
+.PHONY : tamuz_tests_hw4_malloc3.cpp.i
+
+tamuz_tests_hw4_malloc3.s: tamuz_tests_hw4_malloc3.cpp.s
+
+.PHONY : tamuz_tests_hw4_malloc3.s
+
+# target to generate assembly for a file
+tamuz_tests_hw4_malloc3.cpp.s:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_tests_hw4_malloc3.cpp.s
+.PHONY : tamuz_tests_hw4_malloc3.cpp.s
 
 # Help Target
 help:
@@ -186,12 +186,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... OS234123_HW4"
-	@echo "... malloc_2.o"
-	@echo "... malloc_2.i"
-	@echo "... malloc_2.s"
-	@echo "... tamuz_modified_tests_for_malloc_2.o"
-	@echo "... tamuz_modified_tests_for_malloc_2.i"
-	@echo "... tamuz_modified_tests_for_malloc_2.s"
+	@echo "... malloc_3.o"
+	@echo "... malloc_3.i"
+	@echo "... malloc_3.s"
+	@echo "... tamuz_tests_hw4_malloc3.o"
+	@echo "... tamuz_tests_hw4_malloc3.i"
+	@echo "... tamuz_tests_hw4_malloc3.s"
 .PHONY : help
 
 

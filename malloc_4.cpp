@@ -7,7 +7,7 @@
 
 using std::memset;
 using std::memcpy;
-
+using std::ceil;
 #define MMAP_MIN_SIZE (128 * 1024)
 #define BIN_MAX_SIZE 128
 #define MIN_SPLIT 128
@@ -29,6 +29,11 @@ static MallocMetadata* mmap_list_block_head = nullptr;
 static MallocMetadata* mmap_list_block_tail = nullptr;
 static MallocMetadata* free_bins[BIN_MAX_SIZE] = {nullptr};
 
+size_t aligned_size(size_t old_size){
+    return ceil(float(old_size)/float(8))*8;
+}
+
+
 size_t _num_free_blocks();
 
 size_t _num_free_bytes();
@@ -41,21 +46,29 @@ size_t _num_meta_data_bytes();
 
 size_t _size_meta_data();
 
-void split_block(size_t size, MallocMetadata* block_to_split) {
-    if (block_to_split->size - size - _size_meta_data() < MIN_SPLIT ) {
+void split_block(size_t size, MallocMetadata* p) {
+    if (p->size - size - _size_meta_data() < MIN_SPLIT ) {
         return;
     }
-    size_t old_size = block_to_split->size;
-    block_to_split->size = size;
-    void * temp = static_cast<char*>(block_to_split->address) + size;
-    MallocMetadata * new_metadata = static_cast<MallocMetadata*>(temp);
-    new_metadata->address = static_cast<char*>(temp) + _size_meta_data();
-    new_metadata->size = old_size - size;
-    MallocMetadata * tmp =  block_to_split->next;
-    new_metadata->next = tmp;
-    new_metadata->prev = block_to_split;
-    block_to_split->next = new_metadata;
-    sfree((void*)new_metadata);
+    size_t size_aligned = aligned_size(size);
+    size_t size_left = p->size - size_aligned - _size_meta_data();
+    //size_t old_size = block_to_split->size;
+    //block_to_split->size = aligned_size(size);
+    if(size_left>=MIN_SPLIT) {
+        void* temp = static_cast<char*>(p->address) + (size_aligned);
+        MallocMetadata* new_md = static_cast<MallocMetadata*>(temp);
+        new_md->address = static_cast<char*>(temp) + _size_meta_data();
+        new_md->size = size_left;
+        //new_md->is_free = true;
+        //MallocMetadata *new_metadata = (MallocMetadata *) ((char *) p->address + size);
+        //new_metadata->address = static_cast<char *>new_metadata + _size_meta_data();
+        new_metadata->size = size_aligned;
+        MallocMetadata *tmp = p->next;
+        new_md->next = tmp;
+        new_md->prev = p;
+        p->next = new_md;
+        sfree((void *) new_md);
+    }
 }
 
 bool merge(MallocMetadata* first , MallocMetadata* second){
@@ -91,7 +104,7 @@ MallocMetadata *merge_free (MallocMetadata* block_to_merge) {
 }
 
 void* mmap_create (size_t size) {
-    void* new_mmap = mmap(NULL, size + _size_meta_data(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    void* new_mmap = mmap(NULL, size + _size_meta_data(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS, -1, 0);
     if (new_mmap == (void*)(-1)) {
         return NULL;
     }
@@ -114,19 +127,20 @@ void* mmap_create (size_t size) {
 }
 
 void* smalloc(size_t size) {
-    if (size == 0 or size > pow(10,8)) {
+    size_t size_aligned = aligned_size(size);
+    if (size_aligned == 0 or size_aligned > pow(10,8)) {
         return NULL;
     }
-    if (size > MMAP_MIN_SIZE) {
-        return mmap_create(size);
+    if (size_aligned > MMAP_MIN_SIZE) {
+        return mmap_create(size_aligned);
     }
-    size_t index = size / KB;
+    size_t index = size_aligned / KB;
     MallocMetadata* first_in_bin;
     for (; index < BIN_MAX_SIZE; index++) {
         first_in_bin = free_bins[index];
         while (first_in_bin) {
-            if (first_in_bin->size >= size) {
-                split_block(size, first_in_bin);
+            if (first_in_bin->size >= size_aligned) {
+                split_block(size_aligned, first_in_bin);
                 first_in_bin->is_free = false;
                 if (first_in_bin->prev_free) {
                     first_in_bin->prev_free->next_free = first_in_bin->next_free;
@@ -141,12 +155,9 @@ void* smalloc(size_t size) {
             first_in_bin = first_in_bin->next_free;
         }
     }
-    if (list_block_tail != nullptr and list_block_tail->is_free) {
-        if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
+    if (list_block_tail->is_free) {
+        if (sbrk(size_aligned - list_block_tail->size) == (void *)(-1)) {
             return NULL;
-        }
-        if (list_block_tail->prev_free == nullptr and list_block_tail->next_free == nullptr) {
-            free_bins[list_block_tail->size / KB] = nullptr;
         }
         if (list_block_tail->prev_free != nullptr) {
             list_block_tail->prev_free->next_free = list_block_tail->next_free;
@@ -155,14 +166,14 @@ void* smalloc(size_t size) {
             list_block_tail->next_free->prev_free = list_block_tail->prev_free;
         }
         list_block_tail->is_free = false;
-        list_block_tail->size = size;
+        list_block_tail->size = size_aligned;
         return list_block_tail;
     }
-    void* prev_prog_break = sbrk(size + _size_meta_data());
+    void* prev_prog_break = sbrk(size_aligned + _size_meta_data());
     if (prev_prog_break == (void*)(-1)) {
         return NULL;
     }
-    ((MallocMetadata*) prev_prog_break)->size = size;
+    ((MallocMetadata*) prev_prog_break)->size = size_aligned;
     ((MallocMetadata*) prev_prog_break)->is_free = false;
     ((MallocMetadata*) prev_prog_break)->address = static_cast<char*>(prev_prog_break) + _size_meta_data();
     if (list_block_head == nullptr){ //case list empty
@@ -220,8 +231,8 @@ void sfree(void* p) {
 }
 
 void* srealloc(void* oldp, size_t size) {
-
-    if (size == 0 or size > pow(10,8)) {
+    size_t size_aligned = aligned_size(size);
+    if (size_aligned == 0 or size_aligned > pow(10,8)) {
         return NULL;
     }
     MallocMetadata* oldp_meta_data = nullptr;
@@ -230,31 +241,31 @@ void* srealloc(void* oldp, size_t size) {
         oldp_meta_data--;
     }
     oldp_meta_data->is_free = true;
-    if (oldp_meta_data->size < size) {
+    if (oldp_meta_data->size <= size_aligned) {
         if (oldp_meta_data->prev != nullptr and
             oldp_meta_data->prev->is_free and
-            oldp_meta_data->size + oldp_meta_data->prev->size >= size) {
+            oldp_meta_data->size + oldp_meta_data->prev->size >= size_aligned) {
             if (merge(oldp_meta_data->prev, oldp_meta_data)) {
                 oldp_meta_data = oldp_meta_data->prev;
             }
         } else if (oldp_meta_data->next != nullptr and
                    oldp_meta_data->next->is_free and
-                   oldp_meta_data->size + oldp_meta_data->next->size >= size) {
+                   oldp_meta_data->size + oldp_meta_data->next->size >= size_aligned) {
             merge(oldp_meta_data, oldp_meta_data->next);
         }
         else if (oldp_meta_data->next != nullptr and oldp_meta_data->prev != nullptr and
                  oldp_meta_data->next->is_free and oldp_meta_data->prev->is_free and
-                 oldp_meta_data->size + oldp_meta_data->next->size + oldp_meta_data->prev->size >= size) {
+                 oldp_meta_data->size + oldp_meta_data->next->size + oldp_meta_data->prev->size >= size_aligned) {
             oldp_meta_data = merge_free(oldp_meta_data);
         }
     }
     oldp_meta_data->is_free = false;
-    if (oldp_meta_data->size >= size) {
-        split_block(size, oldp_meta_data);
+    if (oldp_meta_data->size >= size_aligned) {
+        split_block(size_aligned, oldp_meta_data);
         return oldp_meta_data->address;
     }
     if (list_block_tail->is_free) {
-        if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
+        if (sbrk(size_aligned - list_block_tail->size) == (void *)(-1)) {
             return NULL;
         }
         if (list_block_tail->prev_free != nullptr) {
@@ -264,10 +275,10 @@ void* srealloc(void* oldp, size_t size) {
             list_block_tail->next_free->prev_free = list_block_tail->prev_free;
         }
         list_block_tail->is_free = false;
-        list_block_tail->size = size;
+        list_block_tail->size = size_aligned;
         return list_block_tail;
     }
-    void* prev_prog_break = smalloc(size);
+    void* prev_prog_break = smalloc(size_aligned);
     if(oldp != NULL and prev_prog_break != NULL){
         memcpy(prev_prog_break,oldp,size);
         oldp_meta_data->is_free = true;
@@ -309,31 +320,21 @@ size_t _num_free_bytes() {
 }
 
 size_t _num_allocated_blocks() {
-    MallocMetadata* block_tmp = list_block_head;
-    MallocMetadata* mmap_tmp = mmap_list_block_head;
+    MallocMetadata* tmp = list_block_head;
     size_t count_of_allocated_blocks = 0;
-    while(block_tmp) {
+    while(tmp) {
         ++count_of_allocated_blocks;
-        block_tmp = block_tmp->next;
-    }
-    while(mmap_tmp) {
-        ++count_of_allocated_blocks;
-        mmap_tmp = mmap_tmp->next;
+        tmp = tmp->next;
     }
     return count_of_allocated_blocks;
 }
 
 size_t _num_allocated_bytes() {
-    MallocMetadata* block_tmp = list_block_head;
-    MallocMetadata* mmap_tmp = mmap_list_block_head;
+    MallocMetadata* tmp = list_block_head;
     size_t num_of_allocated_bytes = 0;
-    while(block_tmp) {
-        num_of_allocated_bytes += block_tmp->size;
-        block_tmp = block_tmp->next;
-    }
-    while(mmap_tmp) {
-        num_of_allocated_bytes += mmap_tmp->size;
-        mmap_tmp = mmap_tmp->next;
+    while(tmp) {
+        num_of_allocated_bytes += tmp->size;
+        tmp = tmp->next;
     }
     return num_of_allocated_bytes;
 }
@@ -343,5 +344,5 @@ size_t _num_meta_data_bytes() {
 }
 
 size_t _size_meta_data() {
-    return sizeof(MallocMetadata);
+    return aligned_size(sizeof(MallocMetadata));
 }

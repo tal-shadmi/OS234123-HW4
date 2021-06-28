@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4
+CMAKE_SOURCE_DIR = /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug
+CMAKE_BINARY_DIR = /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/OS234123_HW4.dir/depend.make
@@ -59,29 +59,29 @@ include CMakeFiles/OS234123_HW4.dir/flags.make
 
 CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o: CMakeFiles/OS234123_HW4.dir/flags.make
 CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o: ../tamuz_modified_tests_for_malloc_2.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o -c /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/tamuz_modified_tests_for_malloc_2.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o -c /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/tamuz_modified_tests_for_malloc_2.cpp
 
 CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/tamuz_modified_tests_for_malloc_2.cpp > CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/tamuz_modified_tests_for_malloc_2.cpp > CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.i
 
 CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/tamuz_modified_tests_for_malloc_2.cpp -o CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/tamuz_modified_tests_for_malloc_2.cpp -o CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.s
 
 CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o: CMakeFiles/OS234123_HW4.dir/flags.make
 CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o: ../malloc_2.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o -c /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/malloc_2.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o -c /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/malloc_2.cpp
 
 CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/malloc_2.cpp > CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/malloc_2.cpp > CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.i
 
 CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/malloc_2.cpp -o CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/malloc_2.cpp -o CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.s
 
 # Object files for target OS234123_HW4
 OS234123_HW4_OBJECTS = \
@@ -95,7 +95,7 @@ OS234123_HW4: CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.
 OS234123_HW4: CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o
 OS234123_HW4: CMakeFiles/OS234123_HW4.dir/build.make
 OS234123_HW4: CMakeFiles/OS234123_HW4.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable OS234123_HW4"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable OS234123_HW4"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/OS234123_HW4.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -108,6 +108,6 @@ CMakeFiles/OS234123_HW4.dir/clean:
 .PHONY : CMakeFiles/OS234123_HW4.dir/clean
 
 CMakeFiles/OS234123_HW4.dir/depend:
-	cd /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4 /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4 /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug /mnt/c/Users/Dell/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/DependInfo.cmake --color=$(COLOR)
+	cd /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4 /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4 /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug /mnt/c/Users/USER/Documents/GitHub/OS234123-HW4/cmake-build-debug/CMakeFiles/OS234123_HW4.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/OS234123_HW4.dir/depend
 
