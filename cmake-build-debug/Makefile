@@ -123,59 +123,59 @@ OS234123_HW4/fast:
 	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/build
 .PHONY : OS234123_HW4/fast
 
-malloc_3.o: malloc_3.cpp.o
+malloc_2.o: malloc_2.cpp.o
 
-.PHONY : malloc_3.o
-
-# target to build an object file
-malloc_3.cpp.o:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.o
-.PHONY : malloc_3.cpp.o
-
-malloc_3.i: malloc_3.cpp.i
-
-.PHONY : malloc_3.i
-
-# target to preprocess a source file
-malloc_3.cpp.i:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.i
-.PHONY : malloc_3.cpp.i
-
-malloc_3.s: malloc_3.cpp.s
-
-.PHONY : malloc_3.s
-
-# target to generate assembly for a file
-malloc_3.cpp.s:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_3.cpp.s
-.PHONY : malloc_3.cpp.s
-
-tamuz_tests_hw4_malloc3.o: tamuz_tests_hw4_malloc3.cpp.o
-
-.PHONY : tamuz_tests_hw4_malloc3.o
+.PHONY : malloc_2.o
 
 # target to build an object file
-tamuz_tests_hw4_malloc3.cpp.o:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_tests_hw4_malloc3.cpp.o
-.PHONY : tamuz_tests_hw4_malloc3.cpp.o
+malloc_2.cpp.o:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.o
+.PHONY : malloc_2.cpp.o
 
-tamuz_tests_hw4_malloc3.i: tamuz_tests_hw4_malloc3.cpp.i
+malloc_2.i: malloc_2.cpp.i
 
-.PHONY : tamuz_tests_hw4_malloc3.i
+.PHONY : malloc_2.i
 
 # target to preprocess a source file
-tamuz_tests_hw4_malloc3.cpp.i:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_tests_hw4_malloc3.cpp.i
-.PHONY : tamuz_tests_hw4_malloc3.cpp.i
+malloc_2.cpp.i:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.i
+.PHONY : malloc_2.cpp.i
 
-tamuz_tests_hw4_malloc3.s: tamuz_tests_hw4_malloc3.cpp.s
+malloc_2.s: malloc_2.cpp.s
 
-.PHONY : tamuz_tests_hw4_malloc3.s
+.PHONY : malloc_2.s
 
 # target to generate assembly for a file
-tamuz_tests_hw4_malloc3.cpp.s:
-	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_tests_hw4_malloc3.cpp.s
-.PHONY : tamuz_tests_hw4_malloc3.cpp.s
+malloc_2.cpp.s:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/malloc_2.cpp.s
+.PHONY : malloc_2.cpp.s
+
+tamuz_modified_tests_for_malloc_2.o: tamuz_modified_tests_for_malloc_2.cpp.o
+
+.PHONY : tamuz_modified_tests_for_malloc_2.o
+
+# target to build an object file
+tamuz_modified_tests_for_malloc_2.cpp.o:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.o
+.PHONY : tamuz_modified_tests_for_malloc_2.cpp.o
+
+tamuz_modified_tests_for_malloc_2.i: tamuz_modified_tests_for_malloc_2.cpp.i
+
+.PHONY : tamuz_modified_tests_for_malloc_2.i
+
+# target to preprocess a source file
+tamuz_modified_tests_for_malloc_2.cpp.i:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.i
+.PHONY : tamuz_modified_tests_for_malloc_2.cpp.i
+
+tamuz_modified_tests_for_malloc_2.s: tamuz_modified_tests_for_malloc_2.cpp.s
+
+.PHONY : tamuz_modified_tests_for_malloc_2.s
+
+# target to generate assembly for a file
+tamuz_modified_tests_for_malloc_2.cpp.s:
+	$(MAKE) -f CMakeFiles/OS234123_HW4.dir/build.make CMakeFiles/OS234123_HW4.dir/tamuz_modified_tests_for_malloc_2.cpp.s
+.PHONY : tamuz_modified_tests_for_malloc_2.cpp.s
 
 # Help Target
 help:
@@ -186,12 +186,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... OS234123_HW4"
-	@echo "... malloc_3.o"
-	@echo "... malloc_3.i"
-	@echo "... malloc_3.s"
-	@echo "... tamuz_tests_hw4_malloc3.o"
-	@echo "... tamuz_tests_hw4_malloc3.i"
-	@echo "... tamuz_tests_hw4_malloc3.s"
+	@echo "... malloc_2.o"
+	@echo "... malloc_2.i"
+	@echo "... malloc_2.s"
+	@echo "... tamuz_modified_tests_for_malloc_2.o"
+	@echo "... tamuz_modified_tests_for_malloc_2.i"
+	@echo "... tamuz_modified_tests_for_malloc_2.s"
 .PHONY : help
 
 
