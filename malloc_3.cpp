@@ -89,7 +89,7 @@ MallocMetadata *merge_free (MallocMetadata* block_to_merge) {
 }
 
 void* mmap_create (size_t size) {
-    void* new_mmap = mmap(NULL, size + _size_meta_data(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS, -1, 0);
+    void* new_mmap = mmap(NULL, size + _size_meta_data(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     if (new_mmap == (void*)(-1)) {
         return NULL;
     }
@@ -139,9 +139,12 @@ void* smalloc(size_t size) {
             first_in_bin = first_in_bin->next_free;
         }
     }
-    if (list_block_tail->is_free) {
+    if (list_block_tail != nullptr and list_block_tail->is_free) {
         if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
             return NULL;
+        }
+        if (list_block_tail->prev_free == nullptr and list_block_tail->next_free == nullptr) {
+            free_bins[list_block_tail->size / KB] = nullptr;
         }
         if (list_block_tail->prev_free != nullptr) {
             list_block_tail->prev_free->next_free = list_block_tail->next_free;
@@ -304,21 +307,31 @@ size_t _num_free_bytes() {
 }
 
 size_t _num_allocated_blocks() {
-    MallocMetadata* tmp = list_block_head;
+    MallocMetadata* block_tmp = list_block_head;
+    MallocMetadata* mmap_tmp = mmap_list_block_head;
     size_t count_of_allocated_blocks = 0;
-    while(tmp) {
+    while(block_tmp) {
         ++count_of_allocated_blocks;
-        tmp = tmp->next;
+        block_tmp = block_tmp->next;
+    }
+    while(mmap_tmp) {
+        ++count_of_allocated_blocks;
+        mmap_tmp = mmap_tmp->next;
     }
     return count_of_allocated_blocks;
 }
 
 size_t _num_allocated_bytes() {
-    MallocMetadata* tmp = list_block_head;
+    MallocMetadata* block_tmp = list_block_head;
+    MallocMetadata* mmap_tmp = mmap_list_block_head;
     size_t num_of_allocated_bytes = 0;
-    while(tmp) {
-        num_of_allocated_bytes += tmp->size;
-        tmp = tmp->next;
+    while(block_tmp) {
+        num_of_allocated_bytes += block_tmp->size;
+        block_tmp = block_tmp->next;
+    }
+    while(mmap_tmp) {
+        num_of_allocated_bytes += mmap_tmp->size;
+        mmap_tmp = mmap_tmp->next;
     }
     return num_of_allocated_bytes;
 }
