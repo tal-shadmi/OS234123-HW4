@@ -42,24 +42,56 @@ size_t _num_meta_data_bytes();
 size_t _size_meta_data();
 
 void split_block(size_t size, MallocMetadata* block_to_split) {
-    if (block_to_split->size - size - _size_meta_data() < MIN_SPLIT ) {
+    if (block_to_split->size < MIN_SPLIT + size + _size_meta_data()) {
         return;
     }
-    size_t old_size = block_to_split->size;
+    size_t size_left = block_to_split->size - size - _size_meta_data();
     block_to_split->size = size;
     void * temp = static_cast<char*>(block_to_split->address) + size;
     MallocMetadata * new_metadata = static_cast<MallocMetadata*>(temp);
     new_metadata->address = static_cast<char*>(temp) + _size_meta_data();
-    new_metadata->size = old_size - size;
+    new_metadata->size = size_left;
     MallocMetadata * tmp =  block_to_split->next;
     new_metadata->next = tmp;
     new_metadata->prev = block_to_split;
+    if (block_to_split->next != nullptr) {
+        block_to_split->next->prev = new_metadata;
+    }
     block_to_split->next = new_metadata;
-    sfree((void*)new_metadata);
+    if (block_to_split == list_block_tail) {
+        list_block_tail = new_metadata;
+    }
+    new_metadata->is_free = true;
+    if (new_metadata->size >= MMAP_MIN_SIZE) {
+        if (new_metadata == mmap_list_block_tail) {
+            mmap_list_block_tail = new_metadata->prev;
+        }
+        if (new_metadata == mmap_list_block_head) {
+            mmap_list_block_head = new_metadata->next;
+        }
+        if (new_metadata->next != nullptr) {
+            new_metadata->next->prev = new_metadata->prev;
+        }
+        if (new_metadata->prev != nullptr) {
+            new_metadata->prev->next = new_metadata->next;
+        }
+        munmap((void*)new_metadata, new_metadata->size + _size_meta_data());
+        return;
+    }
+    size_t index = new_metadata->size / KB;
+    MallocMetadata* first_in_bin = free_bins[index];
+    if (first_in_bin) {
+        first_in_bin->prev_free = new_metadata;
+        new_metadata->next_free = first_in_bin;
+        new_metadata->prev_free = nullptr;
+        free_bins[index] = new_metadata;
+    }
+    free_bins[index] = new_metadata;
+    // sfree((void*)new_metadata->address);
 }
 
 bool merge(MallocMetadata* first , MallocMetadata* second){
-    if ((first == nullptr or second == nullptr)) {
+    if (first == nullptr or second == nullptr) {
         return false;
     }
     if (not first->is_free or not second->is_free) {
@@ -67,6 +99,9 @@ bool merge(MallocMetadata* first , MallocMetadata* second){
     }
     first->size += second->size + _size_meta_data();
     first->next = second->next;
+    if (second->next != nullptr) {
+        second->next->prev = first;
+    }
     if (first->prev_free != nullptr) {
         first->prev_free->next_free = first->next_free;
     }
@@ -78,6 +113,9 @@ bool merge(MallocMetadata* first , MallocMetadata* second){
     }
     if (second->next_free != nullptr) {
         second->next_free->prev_free = second->prev_free;
+    }
+    if (list_block_tail == second) {
+        list_block_tail = first;
     }
     return true;
 }
@@ -156,7 +194,7 @@ void* smalloc(size_t size) {
         }
         list_block_tail->is_free = false;
         list_block_tail->size = size;
-        return list_block_tail;
+        return (void*)list_block_tail->address;
     }
     void* prev_prog_break = sbrk(size + _size_meta_data());
     if (prev_prog_break == (void*)(-1)) {
@@ -198,13 +236,20 @@ void sfree(void* p) {
     tmp--;
     tmp->is_free = true;
     if (tmp->size >= MMAP_MIN_SIZE) {
+        if (tmp == mmap_list_block_tail) {
+            mmap_list_block_tail = tmp->prev;
+        }
+        if (tmp == mmap_list_block_head) {
+            mmap_list_block_head = tmp->next;
+        }
         if (tmp->next != nullptr) {
             tmp->next->prev = tmp->prev;
         }
         if (tmp->prev != nullptr) {
             tmp->prev->next = tmp->next;
         }
-        munmap((void*)tmp, tmp->size + _size_meta_data());
+        munmap((void*)tmp->address, tmp->size + _size_meta_data());
+        return;
     }
     tmp = merge_free(tmp);
     size_t index = tmp->size / KB;
@@ -216,70 +261,93 @@ void sfree(void* p) {
         free_bins[index] = tmp;
     }
     free_bins[index] = tmp;
-
 }
 
 void* srealloc(void* oldp, size_t size) {
-
     if (size == 0 or size > pow(10,8)) {
         return NULL;
     }
     MallocMetadata* oldp_meta_data = nullptr;
+    MallocMetadata* temp = nullptr;
     if (oldp != NULL) {
         oldp_meta_data = (MallocMetadata*)oldp;
         oldp_meta_data--;
     }
-    oldp_meta_data->is_free = true;
-    if (oldp_meta_data->size < size) {
-        if (oldp_meta_data->prev != nullptr and
-            oldp_meta_data->prev->is_free and
-            oldp_meta_data->size + oldp_meta_data->prev->size >= size) {
-            if (merge(oldp_meta_data->prev, oldp_meta_data)) {
-                oldp_meta_data = oldp_meta_data->prev;
+    if (size < MMAP_MIN_SIZE) {
+        oldp_meta_data->is_free = true;
+        if (oldp_meta_data->size < size) {
+            if (oldp_meta_data->prev != nullptr and
+                oldp_meta_data->prev->is_free and
+                oldp_meta_data->size + oldp_meta_data->prev->size >= size) {
+                if (merge(oldp_meta_data->prev, oldp_meta_data)) {
+                    temp = oldp_meta_data;
+                    oldp_meta_data = oldp_meta_data->prev;
+                    if (oldp_meta_data->prev_free == nullptr and oldp_meta_data->next_free == nullptr) {
+                        free_bins[oldp_meta_data->size / KB] = nullptr;
+                    }
+                    if (oldp_meta_data->prev_free != nullptr) {
+                        oldp_meta_data->prev_free->next_free = oldp_meta_data->next_free;
+                    }
+                    if (oldp_meta_data->next_free != nullptr) {
+                        oldp_meta_data->next_free->prev_free = oldp_meta_data->prev_free;
+                    }
+                    oldp_meta_data->next_free = nullptr;
+                    oldp_meta_data->prev_free = nullptr;
+                }
+            } else if (oldp_meta_data->next != nullptr and
+                       oldp_meta_data->next->is_free and
+                       oldp_meta_data->size + oldp_meta_data->next->size >= size) {
+                merge(oldp_meta_data, oldp_meta_data->next);
             }
-        } else if (oldp_meta_data->next != nullptr and
-                   oldp_meta_data->next->is_free and
-                   oldp_meta_data->size + oldp_meta_data->next->size >= size) {
-            merge(oldp_meta_data, oldp_meta_data->next);
+            else if (oldp_meta_data->next != nullptr and oldp_meta_data->prev != nullptr and
+                     oldp_meta_data->next->is_free and oldp_meta_data->prev->is_free and
+                     oldp_meta_data->size + oldp_meta_data->next->size + oldp_meta_data->prev->size >= size) {
+                temp = oldp_meta_data;
+                oldp_meta_data = merge_free(oldp_meta_data);
+                if (oldp_meta_data->prev_free == nullptr and oldp_meta_data->next_free == nullptr) {
+                    free_bins[oldp_meta_data->size / KB] = nullptr;
+                }
+                if (oldp_meta_data->prev_free != nullptr) {
+                    oldp_meta_data->prev_free->next_free = oldp_meta_data->next_free;
+                }
+                if (oldp_meta_data->next_free != nullptr) {
+                    oldp_meta_data->next_free->prev_free = oldp_meta_data->prev_free;
+                }
+                oldp_meta_data->next_free = nullptr;
+                oldp_meta_data->prev_free = nullptr;
+            }
         }
-        else if (oldp_meta_data->next != nullptr and oldp_meta_data->prev != nullptr and
-                 oldp_meta_data->next->is_free and oldp_meta_data->prev->is_free and
-                 oldp_meta_data->size + oldp_meta_data->next->size + oldp_meta_data->prev->size >= size) {
-            oldp_meta_data = merge_free(oldp_meta_data);
+        oldp_meta_data->is_free = false;
+        if (oldp_meta_data->size >= size) {
+            split_block(size, oldp_meta_data); // last test gets "core dumped" with this split
+            if (temp != nullptr) {
+                memcpy(oldp_meta_data->address, temp->address, temp->size);
+            }
+            return oldp_meta_data->address;
         }
-    }
-    oldp_meta_data->is_free = false;
-    if (oldp_meta_data->size >= size) {
-        split_block(size, oldp_meta_data);
-        return oldp_meta_data->address;
-    }
-    if (list_block_tail->is_free) {
-        if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
-            return NULL;
+        if (list_block_tail != nullptr and (list_block_tail->is_free or oldp_meta_data == list_block_tail)) {
+            if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
+                return NULL;
+            }
+            if (list_block_tail->prev_free != nullptr) {
+                list_block_tail->prev_free->next_free = list_block_tail->next_free;
+            }
+            if (list_block_tail->next_free != nullptr) {
+                list_block_tail->next_free->prev_free = list_block_tail->prev_free;
+            }
+            list_block_tail->is_free = false;
+            list_block_tail->size = size;
+            memcpy(list_block_tail->address, oldp, oldp_meta_data->size);
+            if (list_block_tail->address != oldp) {
+                sfree((void*)oldp);
+            }
+            return list_block_tail->address;
         }
-        if (list_block_tail->prev_free != nullptr) {
-            list_block_tail->prev_free->next_free = list_block_tail->next_free;
-        }
-        if (list_block_tail->next_free != nullptr) {
-            list_block_tail->next_free->prev_free = list_block_tail->prev_free;
-        }
-        list_block_tail->is_free = false;
-        list_block_tail->size = size;
-        return list_block_tail;
     }
     void* prev_prog_break = smalloc(size);
     if(oldp != NULL and prev_prog_break != NULL){
         memcpy(prev_prog_break,oldp,size);
-        oldp_meta_data->is_free = true;
-        size_t index = oldp_meta_data->size / KB;
-        MallocMetadata* first_in_bin = free_bins[index];
-        if (first_in_bin) {
-            first_in_bin->prev_free = oldp_meta_data;
-            oldp_meta_data->next_free = first_in_bin;
-            oldp_meta_data->prev_free = nullptr;
-            free_bins[index] = oldp_meta_data;
-        }
-        free_bins[index] = oldp_meta_data;
+        sfree((void*)oldp);
     }
     return prev_prog_break;
 }
