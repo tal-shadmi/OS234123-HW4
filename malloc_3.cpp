@@ -3,7 +3,6 @@
 #include <cmath>
 #include <cstddef>
 #include <sys/mman.h>
-#include "malloc_3.h"
 
 using std::memset;
 using std::memmove;
@@ -41,7 +40,7 @@ size_t _num_meta_data_bytes();
 
 size_t _size_meta_data();
 
-void split_block(size_t size, MallocMetadata* block_to_split) {
+static void split_block(size_t size, MallocMetadata* block_to_split) {
     if (block_to_split->size < MIN_SPLIT + size + _size_meta_data()) {
         return;
     }
@@ -87,10 +86,9 @@ void split_block(size_t size, MallocMetadata* block_to_split) {
         free_bins[index] = new_metadata;
     }
     free_bins[index] = new_metadata;
-    // sfree((void*)new_metadata->address);
 }
 
-bool merge(MallocMetadata* first , MallocMetadata* second){
+static bool merge(MallocMetadata* first , MallocMetadata* second){
     if (first == nullptr or second == nullptr) {
         return false;
     }
@@ -120,7 +118,7 @@ bool merge(MallocMetadata* first , MallocMetadata* second){
     return true;
 }
 
-MallocMetadata *merge_free (MallocMetadata* block_to_merge) {
+static MallocMetadata *merge_free (MallocMetadata* block_to_merge) {
     merge(block_to_merge , block_to_merge->next);
     if (merge(block_to_merge->prev, block_to_merge)) {
         return block_to_merge->prev;
@@ -128,7 +126,7 @@ MallocMetadata *merge_free (MallocMetadata* block_to_merge) {
     return block_to_merge;
 }
 
-void* mmap_create (size_t size) {
+static void* mmap_create (size_t size) {
     void* new_mmap = mmap(NULL, size + _size_meta_data(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     if (new_mmap == (void*)(-1)) {
         return NULL;
@@ -223,7 +221,7 @@ void* scalloc(size_t num, size_t size) {
         return NULL;
     }
     void* prev_prog_break = smalloc(num * size);
-    if (prev_prog_break == (void*)(-1)) {
+    if (prev_prog_break == NULL) {
         return NULL;
     }
     void* curr = prev_prog_break;
@@ -277,6 +275,24 @@ void* srealloc(void* oldp, size_t size) {
         oldp_meta_data--;
     }
     if (size < MMAP_MIN_SIZE) {
+        if (oldp_meta_data == list_block_tail) {
+            if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
+                return NULL;
+            }
+            if (list_block_tail->prev_free != nullptr) {
+                list_block_tail->prev_free->next_free = list_block_tail->next_free;
+            }
+            if (list_block_tail->next_free != nullptr) {
+                list_block_tail->next_free->prev_free = list_block_tail->prev_free;
+            }
+            list_block_tail->is_free = false;
+            list_block_tail->size = size;
+            memmove(list_block_tail->address, oldp, oldp_meta_data->size);
+            if (list_block_tail->address != oldp) {
+                sfree((void*)oldp);
+            }
+            return list_block_tail->address;
+        }
         oldp_meta_data->is_free = true;
         if (oldp_meta_data->size < size) {
             if (oldp_meta_data->prev != nullptr and
@@ -322,13 +338,13 @@ void* srealloc(void* oldp, size_t size) {
         }
         oldp_meta_data->is_free = false;
         if (oldp_meta_data->size >= size) {
-            split_block(size, oldp_meta_data); // last test gets "core dumped" with this split
+            split_block(size, oldp_meta_data);
             if (temp != nullptr) {
                 memmove(oldp_meta_data->address, temp->address, temp->size);
             }
             return oldp_meta_data->address;
         }
-        if (list_block_tail != nullptr and (list_block_tail->is_free or oldp_meta_data == list_block_tail)) {
+        if (list_block_tail != nullptr and list_block_tail->is_free) {
             if (sbrk(size - list_block_tail->size) == (void *)(-1)) {
                 return NULL;
             }

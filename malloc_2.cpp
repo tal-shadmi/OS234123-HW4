@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <cmath>
 #include <cstddef>
-#include "malloc_2.h"
 
 using std::memset;
 using std::memcpy;
